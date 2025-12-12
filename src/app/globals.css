@@ -1,26 +1,182 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Forum&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: auto; /* Disable default smooth scroll, using Lenis instead */
+}
+
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.16);
+  --shadow-card: 0 24px 50px rgba(0, 0, 0, 0.26);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  @apply antialiased;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-background-base text-text-primary;
+  background-image: radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.08), transparent 30%), radial-gradient(circle at 80% 0%, rgba(12, 32, 27, 0.08), transparent 35%);
+}
+
+:root {
+  --float-distance: 12px;
+  --font-monsieur: "Monsieur La Doulaise", cursive;
+}
+
+@keyframes floatSlow {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, var(--float-distance), 6px);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes innerGlow {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,255,255,0.05), inset 0 0 0 1px rgba(255,255,255,0.25);
+  }
+  25% {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,255,255,0.05), inset 0 0 0 1.5px rgba(212,175,55,0.5);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,255,255,0.05), inset 0 0 0 1px rgba(255,255,255,0.25);
+  }
+  75% {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 0 20px rgba(255,255,255,0.05), inset 0 0 0 1.5px rgba(212,175,55,0.5);
+  }
+}
+
+.group:hover {
+  animation: innerGlow 4s ease-in-out infinite !important;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+.floating-dot {
+  animation: floatSlow 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-dot {
+    animation: none;
+  }
+}
+
+a {
+  @apply text-inherit no-underline;
+}
+
+.glass {
+  background: rgba(10, 24, 20, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+}
+
+.grain {
+  position: relative;
+}
+
+.grain::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+.hero-fade {
+  mask-image: linear-gradient(to bottom, black 65%, transparent);
+}
+
+.section-curved {
+  position: relative;
+}
+
+.section-curved::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 80% at 50% 0%, rgba(12, 32, 27, 0.08), transparent);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Page transition 3D support */
+main {
+  position: relative;
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
