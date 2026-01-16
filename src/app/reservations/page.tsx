@@ -1,17 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import Image from "next/image";
 import { useLanguage } from "@/lib/language-context";
-
-// Declare the global ialoc widget type
-declare global {
-  interface Window {
-    ialocEmbedWidget?: {
-      show: (options: { venueId: number; locale: string }) => void;
-    };
-  }
-}
 
 export default function ReservationsPage() {
   const { language } = useLanguage();
@@ -41,24 +31,10 @@ export default function ReservationsPage() {
 
   const t = content[language];
 
-  // Auto-open widget if URL has bookNow parameter
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("bookNow") === "true") {
-      openReservationWidget();
-    }
-  }, [language]);
-
-  const openReservationWidget = () => {
-    if (window.ialocEmbedWidget) {
-      window.ialocEmbedWidget.show({
-        venueId: 4437,
-        locale: language,
-      });
-    } else {
-      // Fallback: redirect to ialoc
-      window.location.href = `/?venueId=4437&bookNow=true&locale=${language}`;
-    }
+  const openReservation = () => {
+    // Trigger the ialoc widget by adding URL params and reloading
+    const locale = language === "ro" ? "ro" : "en";
+    window.location.href = `${window.location.origin}/reservations?venueId=4437&bookNow=true&locale=${locale}`;
   };
 
   return (
@@ -137,12 +113,13 @@ export default function ReservationsPage() {
               </p>
               
               <button
-                onClick={openReservationWidget}
+                onClick={openReservation}
+                type="button"
                 className="relative inline-flex items-center justify-center px-12 py-4 
                          bg-accent-gold/10 border border-accent-gold/40 text-accent-gold
                          hover:bg-accent-gold/20 hover:border-accent-gold/60 
                          transition-all duration-500 group overflow-hidden
-                         font-forum uppercase tracking-[0.25em] text-base"
+                         font-forum uppercase tracking-[0.25em] text-base cursor-pointer"
               >
                 {/* Glow effect */}
                 <span className="absolute inset-0 bg-accent-gold/5 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
