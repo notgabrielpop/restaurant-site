@@ -1,7 +1,6 @@
 "use client";
 
-import { ReactNode, useRef, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { ReactNode, useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -11,72 +10,27 @@ type Props = {
   delay?: number;
 };
 
-// Hook to detect slow connection
-function useSlowConnection() {
-  const [isSlow, setIsSlow] = useState(false);
-  
-  useEffect(() => {
-    const connection = (navigator as Navigator & { connection?: { effectiveType?: string; saveData?: boolean } }).connection;
-    const isSlowConnection = connection?.effectiveType === '2g' || 
-                            connection?.effectiveType === 'slow-2g' ||
-                            connection?.saveData === true;
-    setIsSlow(isSlowConnection);
-  }, []);
-  
-  return isSlow;
-}
-
 export function ScrollSection3D({ children, className, delay = 0 }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const [key, setKey] = useState(0);
-  const pathname = usePathname();
-  const inView = useInView(ref, { once: false, margin: "0px 0px -5% 0px" });
+  const inView = useInView(ref, { once: true, margin: "0px 0px -10% 0px" });
   const reduceMotion = useReducedMotion();
-  const slowConnection = useSlowConnection();
 
-  // Skip animations entirely for slow connections or reduced motion
-  const skipAnimations = reduceMotion || slowConnection;
+  // Simple variants
+  const variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { 
+        duration: 0.5, 
+        ease: "easeOut" as const,
+        delay: Math.min(delay, 0.15),
+      },
+    },
+  };
 
-  // Reset animation state when navigating back to a page
-  useEffect(() => {
-    setHasAnimated(false);
-    setKey(prev => prev + 1);
-  }, [pathname]);
-
-  // Track when element has been animated
-  useEffect(() => {
-    if (inView && !hasAnimated) {
-      setHasAnimated(true);
-    }
-  }, [inView, hasAnimated]);
-
-  const shouldAnimate = inView || hasAnimated;
-
-  // Simplified animations for better performance
-  const variants = skipAnimations
-    ? {
-        hidden: { opacity: 1 },
-        visible: { opacity: 1 },
-      }
-    : {
-        hidden: {
-          opacity: 0,
-          y: 20,
-        },
-        visible: {
-          opacity: 1,
-          y: 0,
-          transition: { 
-            duration: 0.5, 
-            ease: "easeOut" as const,
-            delay: Math.min(delay, 0.2), // Cap delay for faster perceived loading
-          },
-        },
-      };
-
-  // For skipped animations, render without motion wrapper for better performance
-  if (skipAnimations) {
+  // Skip animations for reduced motion preference
+  if (reduceMotion) {
     return (
       <div ref={ref} className={className}>
         {children}
@@ -86,12 +40,11 @@ export function ScrollSection3D({ children, className, delay = 0 }: Props) {
 
   return (
     <motion.div
-      key={key}
       ref={ref}
       className={cn("will-change-[opacity,transform]", className)}
-      variants={variants}
       initial="hidden"
-      animate={shouldAnimate ? "visible" : "hidden"}
+      animate={inView ? "visible" : "hidden"}
+      variants={variants}
     >
       {children}
     </motion.div>

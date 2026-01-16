@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function useGsapHome() {
   const ctxRef = useRef<gsap.Context | null>(null);
-  const pathname = usePathname();
   
   useEffect(() => {
     const reduceMotion =
@@ -18,15 +16,13 @@ export function useGsapHome() {
 
     gsap.registerPlugin(ScrollTrigger);
     
-    // Clean up any existing animations first
-    if (ctxRef.current) {
-      ctxRef.current.revert();
-      ctxRef.current = null;
-    }
-    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    
-    // Small delay to ensure DOM is ready after navigation
+    // Small delay to ensure DOM is ready
     const initTimeout = setTimeout(() => {
+      // Clean up previous animations
+      if (ctxRef.current) {
+        ctxRef.current.revert();
+      }
+      
       ScrollTrigger.refresh();
 
       ctxRef.current = gsap.context(() => {
@@ -206,7 +202,7 @@ export function useGsapHome() {
         }
       });
 
-    }, 150); // End of initTimeout
+    }, 100); // End of initTimeout
 
     return () => {
       clearTimeout(initTimeout);
@@ -214,7 +210,6 @@ export function useGsapHome() {
         ctxRef.current.revert();
         ctxRef.current = null;
       }
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, [pathname]); // Re-run when pathname changes (navigation back to home)
+  }, []);
 }

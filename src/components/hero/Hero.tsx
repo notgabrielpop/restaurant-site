@@ -15,78 +15,15 @@ export function Hero() {
   const buttonRef = useRef<HTMLAnchorElement>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const cardVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const ctxRef = useRef<gsap.Context | null>(null);
   const [animationKey, setAnimationKey] = useState(0);
-  const [mainVideoLoaded, setMainVideoLoaded] = useState(false);
-  const [cardVideosLoaded, setCardVideosLoaded] = useState<boolean[]>([false, false, false, false]);
 
-  // Ensure main video loads and plays properly - HIGH PRIORITY
+  // Simple video play handler
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
-    const handleCanPlayThrough = () => {
-      setMainVideoLoaded(true);
-      video.play().catch(() => {});
-    };
-
-    const handleEnded = () => {
-      video.currentTime = 0;
-      video.play().catch(() => {});
-    };
-
-    // Start loading immediately
-    video.load();
-    
-    // Try to play as soon as possible
-    const playAttempt = video.play();
-    if (playAttempt !== undefined) {
-      playAttempt
-        .then(() => setMainVideoLoaded(true))
-        .catch(() => {
-          // Autoplay was prevented, wait for user interaction or canplaythrough
-        });
-    }
-
-    video.addEventListener("canplaythrough", handleCanPlayThrough);
-    video.addEventListener("ended", handleEnded);
-    
-    return () => {
-      video.removeEventListener("canplaythrough", handleCanPlayThrough);
-      video.removeEventListener("ended", handleEnded);
-    };
+    video.play().catch(() => {});
   }, []);
-
-  // Load card videos after main video or with a slight delay
-  useEffect(() => {
-    const loadCardVideos = () => {
-      cardVideoRefs.current.forEach((video, index) => {
-        if (video) {
-          video.load();
-          video.play().catch(() => {});
-          
-          const handleLoaded = () => {
-            setCardVideosLoaded(prev => {
-              const newState = [...prev];
-              newState[index] = true;
-              return newState;
-            });
-          };
-          
-          video.addEventListener("canplay", handleLoaded, { once: true });
-        }
-      });
-    };
-
-    // Load card videos after main video loads or after 1 second, whichever comes first
-    if (mainVideoLoaded) {
-      loadCardVideos();
-    } else {
-      const timeout = setTimeout(loadCardVideos, 1000);
-      return () => clearTimeout(timeout);
-    }
-  }, [mainVideoLoaded]);
 
   // Force animation key update when pathname changes to trigger re-animation
   useEffect(() => {
@@ -280,13 +217,6 @@ export function Hero() {
     >
       {/* Background Video */}
       <div className="absolute inset-0 z-0 overflow-hidden bg-black">
-        {/* Loading placeholder - shows while video loads */}
-        <div 
-          className={cn(
-            "absolute inset-0 bg-gradient-to-br from-black via-[#1a1a1a] to-black transition-opacity duration-700",
-            mainVideoLoaded ? "opacity-0" : "opacity-100"
-          )}
-        />
         <video
           ref={videoRef}
           autoPlay
@@ -294,10 +224,7 @@ export function Hero() {
           muted
           playsInline
           preload="auto"
-          className={cn(
-            "absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500",
-            mainVideoLoaded ? "opacity-100" : "opacity-0"
-          )}
+          className="absolute top-0 left-0 w-full h-full object-cover"
         >
           <source src="/assets/hero-background.mp4" type="video/mp4" />
         </video>
@@ -362,26 +289,13 @@ export function Hero() {
             )}
           >
             <div className="relative w-full h-full bg-[#1a1a1a]">
-              {/* Loading shimmer */}
-              <div 
-                className={cn(
-                  "absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transition-opacity duration-500",
-                  cardVideosLoaded[index] ? "opacity-0" : "opacity-100 animate-pulse"
-                )}
-              />
               <video
-                ref={(el) => {
-                  cardVideoRefs.current[index] = el;
-                }}
                 autoPlay
                 loop
                 muted
                 playsInline
-                preload="none"
-                className={cn(
-                  "absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500",
-                  cardVideosLoaded[index] ? "opacity-100" : "opacity-0"
-                )}
+                preload="metadata"
+                className="absolute top-0 left-0 w-full h-full object-cover"
               >
                 <source src={videoSrc} type="video/mp4" />
               </video>
