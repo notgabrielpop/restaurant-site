@@ -18,7 +18,7 @@ export function LoadingScreen() {
       // Minimum loading time for smooth transition
       const timer = setTimeout(() => {
         setIsLoading(false);
-      }, 2000);
+      }, 600);
 
       return () => clearTimeout(timer);
     }
@@ -54,7 +54,7 @@ export function LoadingScreen() {
               borderRadius: "50%",
             }}
             transition={{
-              duration: 1.5,
+              duration: 0.5,
               ease: [0.25, 0.1, 0.25, 1],
             }}
             className="absolute bg-black origin-center"
@@ -76,8 +76,8 @@ export function LoadingScreen() {
             }}
             className="relative z-10 text-center px-4"
           >
-            <p className="text-white/90 text-sm sm:text-base font-display tracking-[0.15em] uppercase">
-              Experience the Taste of Lebanon
+            <p className="text-white/90 text-sm sm:text-base font-forum tracking-[0.15em] uppercase">
+              Zaitoone
             </p>
           </motion.div>
         </motion.div>

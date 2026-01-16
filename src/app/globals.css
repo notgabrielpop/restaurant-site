@@ -28,14 +28,26 @@ html.lenis {
   pointer-events: none;
 }
 
+/* Elegant light texture for white sections */
+.bg-texture-light {
+  background-color: #f7f1e8;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(212, 175, 55, 0.06), transparent 30%),
+    radial-gradient(circle at 80% 0%, rgba(12, 32, 27, 0.05), transparent 32%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.35) 1px, transparent 1px);
+  background-size: auto, auto, 60px 60px, 60px 60px;
+  background-repeat: repeat;
+}
+
 :root {
-  color-scheme: light;
-  --radius-sm: 0.5rem;
-  --radius-md: 1rem;
-  --radius-lg: 1.5rem;
-  --radius-xl: 2rem;
-  --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.16);
-  --shadow-card: 0 24px 50px rgba(0, 0, 0, 0.26);
+  color-scheme: dark;
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --shadow-soft: 0 12px 30px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 24px 50px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -43,8 +55,8 @@ html.lenis {
 }
 
 body {
-  @apply bg-background-base text-text-primary;
-  background-image: radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.08), transparent 30%), radial-gradient(circle at 80% 0%, rgba(12, 32, 27, 0.08), transparent 35%);
+  @apply bg-[#111111] text-white/90;
+  font-family: var(--font-forum), 'Forum', serif;
 }
 
 :root {
@@ -173,10 +185,213 @@ main {
   overflow-x: hidden;
 }
 
+/* Elegant floating orb animation */
+@keyframes floatOrb {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+    opacity: 0.6;
+  }
+}
+
+.floating-orb {
+  animation: floatOrb 8s ease-in-out infinite;
+}
+
+/* Shimmer line animation */
+@keyframes shimmerLine {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animate-shimmer-line {
+  background-size: 200% 100%;
+  animation: shimmerLine 3s ease-in-out infinite;
+}
+
+/* Elegant reveal animation */
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal-up {
+  animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Staggered reveal for children */
+.stagger-children > * {
+  opacity: 0;
+  animation: revealUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+
+/* Elegant border glow on hover */
+.elegant-border {
+  position: relative;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  transition: border-color 0.4s ease;
+}
+
+.elegant-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), transparent, rgba(212, 175, 55, 0.4)) border-box;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.elegant-border:hover::before {
+  opacity: 1;
+}
+
+.elegant-border:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+/* Image frame with elegant styling */
+.elegant-image-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.elegant-image-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 10;
+  transition: border-color 0.4s ease;
+}
+
+.elegant-image-frame:hover::before {
+  border-color: rgba(212, 175, 55, 0.3);
+}
+
+.elegant-image-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Parallax depth layers */
+.parallax-slow {
+  transform: translateZ(-2px) scale(1.5);
+}
+
+.parallax-medium {
+  transform: translateZ(-1px) scale(1.25);
+}
+
+/* Elegant text shadow */
+.text-shadow-elegant {
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Section with ambient glow */
+.ambient-glow {
+  position: relative;
+}
+
+.ambient-glow::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 60%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse, rgba(212, 175, 55, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Luxury card styling */
+.luxury-card {
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 26, 0.9) 0%,
+    rgba(17, 17, 17, 0.95) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luxury-card:hover {
+  border-color: rgba(212, 175, 55, 0.25);
+  box-shadow: 
+    0 8px 40px rgba(0, 0, 0, 0.5),
+    0 0 60px rgba(212, 175, 55, 0.05),
+    0 0 0 1px rgba(212, 175, 55, 0.1) inset;
+  transform: translateY(-4px);
+}
+
+/* Decorative quote styling */
+.elegant-quote {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.elegant-quote::before {
+  content: "\201C";
+  position: absolute;
+  left: 0;
+  top: -0.5rem;
+  font-size: 4rem;
+  line-height: 1;
+  color: rgba(212, 175, 55, 0.3);
+  font-family: serif;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  
+  .floating-orb,
+  .animate-shimmer-line,
+  .reveal-up,
+  .stagger-children > * {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }

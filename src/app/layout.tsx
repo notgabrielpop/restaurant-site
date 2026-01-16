@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import {
-  Playfair_Display,
-  Great_Vibes,
+  Forum,
+  Tangerine,
   Inter,
 } from "next/font/google";
 import "./globals.css";
@@ -11,18 +11,19 @@ import { TransitionWrapper } from "@/components/layout/transition-wrapper";
 import { CustomCursor } from "@/components/ui/custom-cursor";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { LoadingScreen } from "@/components/loading-screen";
+import { LanguageProvider } from "@/lib/language-context";
 import { cn } from "@/lib/utils";
 
-const display = Playfair_Display({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const script = Great_Vibes({
-  variable: "--font-script",
+const forum = Forum({
+  variable: "--font-forum",
   subsets: ["latin"],
   weight: ["400"],
+});
+
+const script = Tangerine({
+  variable: "--font-script",
+  subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const body = Inter({
@@ -67,21 +68,23 @@ export default function RootLayout({
       <body
         suppressHydrationWarning
         className={cn(
-          display.variable,
+          forum.variable,
           script.variable,
           body.variable,
-          "bg-background-base text-text-primary font-body"
+          "bg-[#111111] text-text-onDark font-forum"
         )}
       >
-        <SmoothScroll>
-          <LoadingScreen />
-          <CustomCursor />
-          <Header />
-          <TransitionWrapper>
-            <main className="pt-24">{children}</main>
-          </TransitionWrapper>
-          <Footer />
-        </SmoothScroll>
+        <LanguageProvider>
+          <SmoothScroll>
+            <LoadingScreen />
+            <CustomCursor />
+            <Header />
+            <TransitionWrapper>
+              <main className="pt-24">{children}</main>
+            </TransitionWrapper>
+            <Footer />
+          </SmoothScroll>
+        </LanguageProvider>
       </body>
     </html>
   );

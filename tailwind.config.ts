@@ -43,11 +43,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ["var(--font-display)", "serif"],
-        script: ["var(--font-script)", "cursive"],
+        forum: ["var(--font-forum)", "Forum", "serif"],
+        script: ["var(--font-script)", "Tangerine", "cursive"],
         body: ["var(--font-body)", "sans-serif"],
-        monsieur: ['"Monsieur La Doulaise"', "cursive"],
-        forum: ['"Forum"', "serif"],
+        display: ["var(--font-forum)", "Forum", "serif"],
       },
       boxShadow: {
         soft: "0 12px 30px rgba(0, 0, 0, 0.16)",

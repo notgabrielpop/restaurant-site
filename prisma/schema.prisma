@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Reservation {
+  id             String   @id @default(cuid())
+  name           String
+  email          String
+  phone          String
+  date           DateTime
+  time           String
+  guests         Int
+  occasion       String?
+  areaPreference String?
+  message        String?
+  status         ReservationStatus @default(pending)
+  createdAt      DateTime @default(now())
+}
+
+enum ReservationStatus {
+  pending
+  confirmed
+  cancelled
+}
+
+model MenuCategory {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  name        String
+  description String?
+  order       Int
+  items       MenuItem[]
+}
+
+model MenuItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  isSignature Boolean  @default(false)
+  isPopular   Boolean  @default(false)
+  category    MenuCategory @relation(fields: [categoryId], references: [id])
+  categoryId  String
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  quote     String
+  rating    Int
+  createdAt DateTime @default(now())
+}
+

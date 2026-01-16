@@ -5,18 +5,20 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/menu", label: "Menu" },
-  { href: "/about", label: "About" },
-  { href: "/reservations", label: "Reservations" },
-  { href: "/contact", label: "Contact" },
-];
+import { useLanguage } from "@/lib/language-context";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
+
+  const navLinks = [
+    { href: "/", label: t("nav.home") },
+    { href: "/menu", label: t("nav.menu") },
+    { href: "/about", label: t("nav.about") },
+    { href: "/reservations", label: t("nav.reservations") },
+    { href: "/contact", label: t("nav.contact") },
+  ];
 
   useEffect(() => {
     if (open) {
@@ -35,6 +37,10 @@ export function Header() {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const toggleLanguage = () => {
+    setLanguage(language === "ro" ? "en" : "ro");
+  };
 
   return (
     <>
@@ -86,8 +92,8 @@ export function Header() {
           </div>
 
           {/* Desktop nav */}
-          <nav className="hidden items-center gap-6 md:flex">
-            <div className="flex items-center gap-6 text-xs font-medium uppercase tracking-[0.18em] text-white/70">
+          <nav className="hidden items-center gap-4 md:flex">
+            <div className="flex items-center gap-6 text-xs font-forum uppercase tracking-[0.18em] text-white/70">
               {navLinks.map((item) => (
                 <Link
                   key={item.href}
@@ -99,10 +105,20 @@ export function Header() {
                 </Link>
               ))}
             </div>
+
+            {/* Language Switcher */}
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-1 rounded-sm border border-white/20 px-3 py-1.5 text-xs font-forum uppercase tracking-wider text-white/70 hover:text-white hover:border-white/40 transition-all"
+            >
+              <span className={language === "ro" ? "text-accent-gold" : "text-white/50"}>RO</span>
+              <span className="text-white/30">|</span>
+              <span className={language === "en" ? "text-accent-gold" : "text-white/50"}>EN</span>
+            </button>
+
             <div className="relative inline-block">
-              {/* Very subtle moving glow effect - two colors */}
               <div 
-                className="absolute -inset-0.5 rounded-full bg-gradient-to-r from-white/60 via-accent-gold/45 to-white/60 blur-lg pointer-events-none"
+                className="absolute -inset-0.5 rounded-sm bg-gradient-to-r from-white/60 via-accent-gold/45 to-white/60 blur-lg pointer-events-none"
                 style={{
                   animation: "glow 4s ease-in-out infinite",
                 }}
@@ -110,13 +126,13 @@ export function Header() {
               <Link
                 href="/reservations"
                 data-cursor="link"
-                className="relative z-10 inline-flex items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-medium text-white shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_0_20px_rgba(255,255,255,0.05)] hover:bg-black/90 transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 group"
+                className="relative z-10 inline-flex items-center justify-center rounded-sm bg-black px-6 py-3 text-sm font-forum text-white shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_0_20px_rgba(255,255,255,0.05)] hover:bg-black/90 transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 group"
                 style={{
                   animation: "innerGlow 4s ease-in-out infinite",
                 }}
               >
                 <span className="relative z-10">
-                  Book a Table
+                  {t("nav.book")}
                 </span>
               </Link>
             </div>
@@ -156,9 +172,14 @@ export function Header() {
               </div>
 
               <div className="flex flex-col items-center gap-8">
-                <button className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2 text-xs font-medium uppercase tracking-[0.18em] text-white/80">
-                  English
-                  <span className="text-[0.7rem]">▾</span>
+                {/* Mobile Language Switcher */}
+                <button
+                  onClick={toggleLanguage}
+                  className="inline-flex items-center gap-2 rounded-sm border border-white/30 px-5 py-2 text-xs font-forum uppercase tracking-[0.18em] text-white/80"
+                >
+                  <span className={language === "ro" ? "text-accent-gold" : "text-white/50"}>RO</span>
+                  <span className="text-white/30">|</span>
+                  <span className={language === "en" ? "text-accent-gold" : "text-white/50"}>EN</span>
                 </button>
 
                 <ul className="flex flex-col items-center gap-4 text-base">
@@ -167,7 +188,7 @@ export function Header() {
                       <Link
                         href={item.href}
                         onClick={() => setOpen(false)}
-                        className="text-lg text-white/85 transition-colors duration-200 hover:text-white"
+                        className="text-lg font-forum text-white/85 transition-colors duration-200 hover:text-white"
                       >
                         {item.label}
                       </Link>
@@ -178,9 +199,8 @@ export function Header() {
 
               <div className="flex flex-col items-center gap-4">
                 <div className="relative inline-block">
-                  {/* Very subtle moving glow effect - two colors */}
                   <div 
-                    className="absolute -inset-0.5 rounded-full bg-gradient-to-r from-white/60 via-accent-gold/45 to-white/60 blur-lg pointer-events-none"
+                    className="absolute -inset-0.5 rounded-sm bg-gradient-to-r from-white/60 via-accent-gold/45 to-white/60 blur-lg pointer-events-none"
                     style={{
                       animation: "glow 4s ease-in-out infinite",
                     }}
@@ -189,18 +209,18 @@ export function Header() {
                     href="/reservations"
                     onClick={() => setOpen(false)}
                     data-cursor="link"
-                    className="relative z-10 inline-flex items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-medium text-white shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_0_20px_rgba(255,255,255,0.05)] hover:bg-black/90 transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 group"
+                    className="relative z-10 inline-flex items-center justify-center rounded-sm bg-black px-6 py-3 text-sm font-forum text-white shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_0_20px_rgba(255,255,255,0.05)] hover:bg-black/90 transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 group"
                     style={{
                       animation: "innerGlow 4s ease-in-out infinite",
                     }}
                   >
                     <span className="relative z-10">
-                      Book a Table
+                      {t("nav.book")}
                     </span>
                   </Link>
                 </div>
-                <p className="text-[0.65rem] uppercase tracking-[0.22em] text-white/50">
-                  Since 2014 • Bucharest
+                <p className="text-[0.65rem] font-forum uppercase tracking-[0.22em] text-white/50">
+                  {language === "ro" ? "Din 2014 • București" : "Since 2014 • Bucharest"}
                 </p>
               </div>
             </motion.div>
@@ -210,4 +230,3 @@ export function Header() {
     </>
   );
 }
-

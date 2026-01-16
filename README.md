@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Zaitoone.ro – Next.js App
 
-## Getting Started
+Full-stack Next.js (App Router) site for restaurant Zaitoone, with Tailwind, Prisma/PostgreSQL, Framer Motion micro-interactions, and deploy-ready Docker setup.
 
-First, run the development server:
+### Requirements
+- Node 20+ (built with Node 22)
+- Yarn
+- PostgreSQL (local or via Docker)
 
+### Environment
+Copy and adjust env:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp env.example .env.local
+# DATABASE_URL="postgresql://postgres:postgres@localhost:5432/zaitoone"
+# SMTP_HOST="smtp.yourprovider.com"
+# SMTP_PORT="587"
+# SMTP_USER="apikey_or_username"
+# SMTP_PASS="password"
+# SMTP_FROM="Zaitoone <no-reply@zaitoone.ro>"
+# SMTP_TO="reservations@zaitoone.ro"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Install
+```bash
+yarn install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Database
+Generate client and push schema:
+```bash
+yarn prisma:generate
+yarn db:push
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Seed with sample menu/testimonials:
+```bash
+yarn db:seed
+```
 
-## Learn More
+### Run locally
+```bash
+yarn dev
+# http://localhost:3000
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Build & start
+```bash
+yarn build
+yarn start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Docker
+Build and run (includes Postgres):
+```bash
+docker-compose up --build
+# app on http://localhost:3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Standalone image (uses Next.js standalone output):
+```bash
+docker build -t zaitoone-app .
+docker run -p 3000:3000 --env-file .env.local zaitoone-app
+```
 
-## Deploy on Vercel
+### Useful scripts
+- `yarn db:push` – apply Prisma schema
+- `yarn db:seed` – seed menu/testimonials
+- `yarn prisma:generate` – regenerate Prisma client
+- `yarn lint` – lint
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Project structure
+- `src/app` – routes (home, menu, about, reservations, events, contact) + API routes
+- `src/components` – UI primitives, layout, sections
+- `src/lib` – Prisma client, sample data, utils
+- `prisma/schema.prisma` – data model
+- `prisma/seed.ts` – seed script
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### API endpoints
+- `POST /api/reservations` – create reservation (server validation)
+- `GET /api/menu` – categories & items (Prisma with fallback)
+- `GET /api/menu/:category` – items by category
+- `POST /api/contact` – contact form stub (ready for SMTP)
+- Email: if SMTP env vars are set, contact/reservation messages are sent via
+  nodemailer; otherwise they are logged to the server console (stub mode).
+
+### Notes
+- Styling via Tailwind with custom palette (deep green, gold, warm ivory) and script/serif/sans fonts.
+- Remote images served from Unsplash; adjust `next.config.ts` if you swap domains.
+- All text is in Romanian with short lines for easy editing.

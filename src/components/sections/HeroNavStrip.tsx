@@ -1,72 +1,92 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/language-context";
 
-const CARDS = [
-  {
-    key: "menu",
-    title: "MENU",
-    href: "/menu",
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&h=800&fit=crop&q=85",
-  },
-  {
-    key: "reservation",
-    title: "RESERVATION",
-    href: "/reservations",
-    image: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&h=800&fit=crop&q=85",
-  },
-  {
-    key: "restaurant",
-    title: "OUR RESTAURANT",
-    href: "/about#our-restaurant",
-    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&h=800&fit=crop&q=85",
-  },
-];
-
-export function HeroNavStrip(): JSX.Element {
+export function HeroNavStrip() {
   const sectionRef = useRef<HTMLElement>(null);
+  const { t } = useLanguage();
+  const [mounted, setMounted] = useState(false);
 
-  useLayoutEffect(() => {
+  const CARDS = [
+    {
+      key: "menu",
+      title: t("strip.menu"),
+      href: "/menu",
+      image: "/assets/Meals/meals-name/Cotlet Miel.png",
+    },
+    {
+      key: "reservation",
+      title: t("strip.reservation"),
+      href: "/reservations",
+      image: "/assets/Meals/meals-name/Mix de fructe de mare la gratar cu salata ruccola.png",
+    },
+    {
+      key: "restaurant",
+      title: t("strip.restaurant"),
+      href: "/about#our-restaurant",
+      image: "/assets/Meals/meals-name/Fatteh Humus cu Carne si Muguri de Pin.png",
+    },
+  ];
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const reduceMotion =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     if (reduceMotion) {
+      // Ensure cards are visible even without animation
+      const cards = sectionRef.current?.querySelectorAll(".hero-nav-card");
+      cards?.forEach((card) => {
+        (card as HTMLElement).style.opacity = "1";
+        (card as HTMLElement).style.transform = "translateY(0)";
+      });
       return;
     }
 
-    const ctx = gsap.context(() => {
-      const cards = sectionRef.current?.querySelectorAll(".hero-nav-card");
-      if (cards && cards.length > 0) {
-        gsap.fromTo(
-          cards,
-          { y: 60, opacity: 0 },
-          {
+    const timeoutId = setTimeout(() => {
+      const ctx = gsap.context(() => {
+        const cards = sectionRef.current?.querySelectorAll(".hero-nav-card");
+        if (cards && cards.length > 0) {
+          // Reset to initial state first
+          gsap.set(cards, { y: 40, opacity: 0 });
+          
+          gsap.to(cards, {
             y: 0,
             opacity: 1,
-            duration: 0.7,
+            duration: 0.6,
             ease: "power3.out",
-            stagger: 0.12,
-          }
-        );
-      }
-    }, sectionRef);
+            stagger: 0.1,
+          });
+        }
+      }, sectionRef);
 
-    return () => ctx.revert();
-  }, []);
+      return () => ctx.revert();
+    }, 50);
+
+    return () => clearTimeout(timeoutId);
+  }, [mounted]);
 
   return (
-    <section ref={sectionRef} className="text-white relative z-0 overflow-visible" style={{ marginTop: '-120px', paddingTop: '120px', background: 'transparent' }}>
-      {/* full-width container; no max-w so it spans the screen - only cards area has black bg */}
-      <div className="w-full px-1 pb-10 pt-0 sm:px-2 lg:px-3">
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 bg-black/0">
+    <section
+      ref={sectionRef}
+      className="bg-black text-white relative z-10 overflow-visible"
+    >
+      <div className="w-full px-1 py-1 sm:py-1.5 lg:py-2">
+        <div className="grid gap-1 md:grid-cols-3">
           {CARDS.map((card) => {
             const { key, ...cardProps } = card;
-            return <NavCard key={key} {...cardProps} />;
+            return <NavCard key={key} {...cardProps} discover={t("strip.discover")} />;
           })}
         </div>
       </div>
@@ -78,37 +98,21 @@ type NavCardProps = {
   title: string;
   href: string;
   image: string;
+  discover: string;
 };
 
-function NavCard({ title, href, image }: NavCardProps) {
+function NavCard({ title, href, image, discover }: NavCardProps) {
   return (
     <Link
       href={href}
       data-cursor="link"
       className={cn(
-        "hero-nav-card group relative flex min-h-[230px] overflow-hidden rounded-lg",
-        "bg-[#050505] shadow-[0_30px_70px_rgba(0,0,0,0.75)]",
-        "transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1.5 hover:shadow-[0_40px_90px_rgba(0,0,0,0.8)]",
+        "hero-nav-card group relative flex min-h-[200px] md:min-h-[180px] lg:min-h-[220px] overflow-hidden rounded-sm",
+        "bg-[#050505]",
+        "transition-all duration-300 hover:z-10 hover:brightness-110",
         "will-change-transform"
       )}
-      onMouseMove={(e) => {
-        if (typeof window === "undefined") return;
-        const cardEl = e.currentTarget;
-        const rect = cardEl.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = (y - centerY) / 30;
-        const rotateY = (centerX - x) / 30;
-
-        cardEl.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02) translateY(-6px)`;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "perspective(1000px) rotateX(0) rotateY(0) scale(1) translateY(0)";
-      }}
     >
-      {/* background media (image or later video) */}
       <div className="absolute inset-0">
         <Image
           src={image}
@@ -117,24 +121,22 @@ function NavCard({ title, href, image }: NavCardProps) {
           className="object-cover transition-transform duration-700 group-hover:scale-105"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
-        {/* dark gradient at bottom */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
       </div>
 
-      {/* bottom-right content cluster: DISCOVER + TITLE + arrow */}
       <div className="relative mt-auto flex w-full justify-end px-6 pb-5 pt-24">
         <div className="flex items-center gap-3 text-right">
           <div>
-            <p className="text-[0.55rem] uppercase tracking-[0.28em] text-white/70">
-              DISCOVER
+            <p className="text-[0.55rem] font-forum uppercase tracking-[0.28em] text-white/70">
+              {discover}
             </p>
-            <p className="mt-0.5 text-xs font-display tracking-[0.24em] text-white sm:text-sm">
+            <p className="mt-0.5 text-xs font-forum tracking-[0.24em] text-white sm:text-sm">
               {title}
             </p>
           </div>
 
           <div
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/80 bg-black/40 text-xs text-white transition-all duration-300 group-hover:scale-110 group-hover:bg-white group-hover:text-black"
+            className="flex h-9 w-9 items-center justify-center rounded-sm border border-white/80 bg-black/40 text-xs text-white transition-all duration-300 group-hover:scale-110 group-hover:bg-white group-hover:text-black"
             data-cursor="link"
           >
             →
