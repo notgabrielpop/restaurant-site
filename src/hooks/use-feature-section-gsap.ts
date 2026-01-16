@@ -23,6 +23,9 @@ export function useFeatureSectionGsap(
 
     if (reduceMotion) return;
 
+    // Reset section visibility for re-animation
+    gsap.set(section, { opacity: 1, y: 0 });
+    
     // Refresh ScrollTrigger for this section
     ScrollTrigger.refresh();
 

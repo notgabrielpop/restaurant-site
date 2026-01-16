@@ -1,18 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export function useGsapHome() {
   const ctxRef = useRef<gsap.Context | null>(null);
-  const initRef = useRef(false);
+  const pathname = usePathname();
   
   useEffect(() => {
-    // Prevent double initialization in strict mode
-    if (initRef.current) return;
-    initRef.current = true;
-
     const reduceMotion =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -21,13 +18,15 @@ export function useGsapHome() {
 
     gsap.registerPlugin(ScrollTrigger);
     
+    // Clean up any existing animations first
+    if (ctxRef.current) {
+      ctxRef.current.revert();
+      ctxRef.current = null;
+    }
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    
     // Small delay to ensure DOM is ready after navigation
     const initTimeout = setTimeout(() => {
-      // Kill previous context if exists
-      if (ctxRef.current) {
-        ctxRef.current.revert();
-      }
-      
       ScrollTrigger.refresh();
 
       ctxRef.current = gsap.context(() => {
@@ -211,13 +210,11 @@ export function useGsapHome() {
 
     return () => {
       clearTimeout(initTimeout);
-      initRef.current = false;
       if (ctxRef.current) {
         ctxRef.current.revert();
         ctxRef.current = null;
       }
-      // Only kill ScrollTriggers created in this context
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, []); // Only run on mount/unmount
+  }, [pathname]); // Re-run when pathname changes (navigation back to home)
 }

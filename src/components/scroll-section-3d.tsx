@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useRef, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -28,12 +29,20 @@ function useSlowConnection() {
 export function ScrollSection3D({ children, className, delay = 0 }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const inView = useInView(ref, { once: true, margin: "0px 0px -5% 0px" });
+  const [key, setKey] = useState(0);
+  const pathname = usePathname();
+  const inView = useInView(ref, { once: false, margin: "0px 0px -5% 0px" });
   const reduceMotion = useReducedMotion();
   const slowConnection = useSlowConnection();
 
   // Skip animations entirely for slow connections or reduced motion
   const skipAnimations = reduceMotion || slowConnection;
+
+  // Reset animation state when navigating back to a page
+  useEffect(() => {
+    setHasAnimated(false);
+    setKey(prev => prev + 1);
+  }, [pathname]);
 
   // Track when element has been animated
   useEffect(() => {
@@ -77,6 +86,7 @@ export function ScrollSection3D({ children, className, delay = 0 }: Props) {
 
   return (
     <motion.div
+      key={key}
       ref={ref}
       className={cn("will-change-[opacity,transform]", className)}
       variants={variants}
