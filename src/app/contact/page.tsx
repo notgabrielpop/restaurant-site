@@ -49,7 +49,7 @@ export default function ContactPage() {
       phone: "Telefon",
       address: "Adresă",
       hours: "Program",
-      hoursValue: "Luni - Duminică: 12:00 - 23:00",
+      hoursValue: "Luni - Duminică: 12:00 - 00:00",
     },
     en: {
       eyebrow: "Contact",
@@ -67,7 +67,7 @@ export default function ContactPage() {
       phone: "Phone",
       address: "Address",
       hours: "Hours",
-      hoursValue: "Monday - Sunday: 12:00 - 23:00",
+      hoursValue: "Monday - Sunday: 12:00 - 00:00",
     },
   };
 

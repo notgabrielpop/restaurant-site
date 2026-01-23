@@ -1279,9 +1279,7 @@ export const highlightCards = [
 export const location = {
   address: "B-dul Nicolae Caramfil 2, București",
   hours: [
-    "Luni - Joi: 12:00 - 23:00",
-    "Vineri - Sâmbătă: 12:00 - 00:00",
-    "Duminică: 12:00 - 22:00",
+    "Luni - Duminică: 12:00 - 00:00",
   ],
   phone: "+40 731 000 000",
   email: "rezervari@zaitoone.ro",
