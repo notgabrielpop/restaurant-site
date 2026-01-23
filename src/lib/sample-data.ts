@@ -1152,14 +1152,14 @@ export const menuItems: MenuItem[] = [
     categorySlug: "salate",
     name: { ro: "Tabbouleh", en: "Tabbouleh" },
     description: { ro: "Pătrunjel, ceapă, quinoa, lămâie și ulei de măsline", en: "Parsley, onion, quinoa, lemon and olive oil" },
-    price: 46,
+    price: 49,
   },
   {
     id: "scallop-jewel",
     categorySlug: "salate",
     name: { ro: "Fattoush", en: "Fattoush" },
     description: { ro: "Castraveți, salată verde, ceapă, ardei, lămâie, ulei de măsline, valeriană, mentă și pâine prăjită", en: "Cucumbers, lettuce, onion, bell pepper, lemon, olive oil, valerian, mint and toast" },
-    price: 48,
+    price: 55,
   },
 ];
 
