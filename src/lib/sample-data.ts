@@ -1281,7 +1281,7 @@ export const location = {
   hours: [
     "Luni - Duminică: 12:00 - 00:00",
   ],
-  phone: "+40 731 000 000",
-  email: "rezervari@zaitoone.ro",
+  phone: "+40 737 299 900",
+  email: "office@zaitoone.ro",
 };
 
